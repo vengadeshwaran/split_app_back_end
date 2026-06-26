@@ -1,0 +1,289 @@
+{
+  "info": {
+    "name": "SPIT API",
+    "description": "API collection for Spit Node.js + PostgreSQL + Sequelize project",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "register"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"John\",\n  \"email\": \"john@example.com\",\n  \"password\": \"password123\",\n  \"confirmPassword\": \"password123\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "description": "Register a new user. Returns user details (password excluded)."
+          },
+          "response": [
+            {
+              "name": "201 - Registered",
+              "status": "Created",
+              "code": 201,
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"message\": \"User registered successfully\",\n  \"user\": {\n    \"id\": 6,\n    \"name\": \"John\",\n    \"email\": \"john@example.com\",\n    \"color_code\": \"#4ECDC4\"\n  }\n}"
+            },
+            {
+              "name": "400 - Passwords Do Not Match",
+              "status": "Bad Request",
+              "code": 400,
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"error\": \"Passwords do not match\"\n}"
+            },
+            {
+              "name": "409 - Email Already In Use",
+              "status": "Conflict",
+              "code": 409,
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"error\": \"Email already in use\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var res = pm.response.json();",
+                  "if (res.user && res.user.token) {",
+                  "  pm.collectionVariables.set('token', res.user.token);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "login"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"x@example.com\",\n  \"password\": \"password123\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "description": "Login with email and password. JWT token is auto-saved to {{token}} variable."
+          },
+          "response": [
+            {
+              "name": "200 - Login Successful",
+              "status": "OK",
+              "code": 200,
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"message\": \"Login successful\",\n  \"user\": {\n    \"id\": 1,\n    \"name\": \"X\",\n    \"email\": \"x@example.com\",\n    \"color_code\": \"#FF6B6B\",\n    \"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...\"\n  }\n}"
+            },
+            {
+              "name": "401 - Invalid Credentials",
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"error\": \"Invalid email or password\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "Get All Users",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/users",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "users"]
+            },
+            "description": "Returns all users sorted by id."
+          },
+          "response": [
+            {
+              "name": "200 - Users List",
+              "status": "OK",
+              "code": 200,
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "[\n  { \"id\": 1, \"name\": \"X\", \"email\": \"x@example.com\", \"created_at\": \"2024-01-01T00:00:00.000Z\" },\n  { \"id\": 2, \"name\": \"A\", \"email\": \"a@example.com\", \"created_at\": \"2024-01-01T00:00:00.000Z\" },\n  { \"id\": 3, \"name\": \"B\", \"email\": \"b@example.com\", \"created_at\": \"2024-01-01T00:00:00.000Z\" },\n  { \"id\": 4, \"name\": \"C\", \"email\": \"c@example.com\", \"created_at\": \"2024-01-01T00:00:00.000Z\" },\n  { \"id\": 5, \"name\": \"D\", \"email\": \"d@example.com\", \"created_at\": \"2024-01-01T00:00:00.000Z\" }\n]"
+            }
+          ]
+        },
+        {
+          "name": "Get User By Id",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/users/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "users", "1"]
+            },
+            "description": "Returns a single user by ID."
+          },
+          "response": [
+            {
+              "name": "200 - User Found",
+              "status": "OK",
+              "code": 200,
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"id\": 1,\n  \"name\": \"X\",\n  \"email\": \"x@example.com\",\n  \"created_at\": \"2024-01-01T00:00:00.000Z\"\n}"
+            },
+            {
+              "name": "404 - User Not Found",
+              "status": "Not Found",
+              "code": 404,
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"error\": \"User not found\"\n}"
+            },
+            {
+              "name": "400 - Invalid ID",
+              "status": "Bad Request",
+              "code": 400,
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"error\": \"Invalid user ID\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Get User Friends",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/users/1/friends",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "users", "1", "friends"]
+            },
+            "description": "Returns the user and their friends list."
+          },
+          "response": [
+            {
+              "name": "200 - Friends List",
+              "status": "OK",
+              "code": 200,
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"user\": {\n    \"id\": 1,\n    \"name\": \"X\"\n  },\n  \"friends\": [\n    { \"id\": 2, \"name\": \"A\" },\n    { \"id\": 3, \"name\": \"B\" },\n    { \"id\": 4, \"name\": \"C\" },\n    { \"id\": 5, \"name\": \"D\" }\n  ]\n}"
+            },
+            {
+              "name": "404 - User Not Found",
+              "status": "Not Found",
+              "code": 404,
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"error\": \"User not found\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Add Friend",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/users/1/friends",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "users", "1", "friends"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"friendId\": 2\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "description": "Adds a friend to the user's friends list. Friendship is one-directional (user 1 → friend 2)."
+          },
+          "response": [
+            {
+              "name": "201 - Friend Added",
+              "status": "Created",
+              "code": 201,
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"message\": \"Friend added successfully\",\n  \"friend\": {\n    \"id\": 2,\n    \"name\": \"A\"\n  }\n}"
+            },
+            {
+              "name": "400 - Already Friends",
+              "status": "Bad Request",
+              "code": 409,
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"error\": \"Already friends\"\n}"
+            },
+            {
+              "name": "400 - Cannot Add Yourself",
+              "status": "Bad Request",
+              "code": 400,
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"error\": \"Cannot add yourself as a friend\"\n}"
+            },
+            {
+              "name": "400 - Missing friendId",
+              "status": "Bad Request",
+              "code": 400,
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"error\": \"friendId is required\"\n}"
+            },
+            {
+              "name": "404 - Friend User Not Found",
+              "status": "Not Found",
+              "code": 404,
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"error\": \"Friend user not found\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Remove Friend",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/api/users/1/friends/2",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "users", "1", "friends", "2"]
+            },
+            "description": "Removes a friend from the user's friends list by friendId."
+          },
+          "response": [
+            {
+              "name": "200 - Friend Removed",
+              "status": "OK",
+              "code": 200,
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"message\": \"Friend removed successfully\"\n}"
+            },
+            {
+              "name": "404 - Friend Not Found",
+              "status": "Not Found",
+              "code": 404,
+              "header": [{ "key": "Content-Type", "value": "application/json" }],
+              "body": "{\n  \"error\": \"Friend not found\"\n}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
