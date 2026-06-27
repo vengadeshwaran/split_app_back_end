@@ -4,10 +4,18 @@ class AuthController {
   async register(req, res, next) {
     try {
       const data = await authService.register(req.body);
-      res.status(200).json({
-        message: 'OTP sent to your email. Please verify to complete registration.',
+      res.status(201).json({
+        message: 'Registration successful',
         status: true,
-        email: data.email,
+        token: data.token,
+        user: {
+          id: data.id,
+          name: data.name,
+          email: data.email,
+          color_code: data.color_code,
+          is_admin: data.is_admin,
+          preferred_currency: data.preferred_currency,
+        },
       });
     } catch (err) {
       next(err);
