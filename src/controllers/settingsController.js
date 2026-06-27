@@ -4,7 +4,7 @@ const { CURRENCY_LIST } = require('../constants/currencies');
 class SettingsController {
   async getCurrency(req, res, next) {
     try {
-      const value = await settingsService.getCurrency();
+      const value = await settingsService.getCurrency(req.user.userId);
       res.json({ currency: value });
     } catch (err) { next(err); }
   }
@@ -16,7 +16,7 @@ class SettingsController {
       if (!CURRENCY_LIST.includes(currency)) {
         return res.status(400).json({ error: 'Invalid currency value' });
       }
-      const value = await settingsService.updateCurrency(currency);
+      const value = await settingsService.updateCurrency(req.user.userId, currency);
       res.json({ currency: value });
     } catch (err) { next(err); }
   }
