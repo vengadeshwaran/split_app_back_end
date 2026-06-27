@@ -16,5 +16,6 @@ router.get('/:id/balances',                     verifyToken, groupController.get
 router.post('/:id/settle-member',               verifyToken, groupController.settleMemberAllExpenses);
 router.get('/:id/my-balances',                  verifyToken, groupController.getMyGroupBalances);
 router.post('/:id/settle-pairwise',             verifyToken, groupController.settlePairwise);
+router.get('/:id/requests',                     verifyToken, groupController.getGroupPendingRequests);
 
 module.exports = router;

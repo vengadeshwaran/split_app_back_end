@@ -1,13 +1,16 @@
 const db = require('../config/db');
 
 class SettingsService {
-  async getCurrency(userId) {
-    const result = await db.query('SELECT preferred_currency FROM users WHERE id = $1', [userId]);
-    return result.rows[0]?.preferred_currency || 'Indian Rupee (₹)';
+  async getCurrency() {
+    const result = await db.query("SELECT value FROM app_settings WHERE key = 'currency'");
+    return result.rows[0]?.value || 'Indian Rupee (₹)';
   }
 
-  async updateCurrency(userId, value) {
-    await db.query('UPDATE users SET preferred_currency = $1 WHERE id = $2', [value, userId]);
+  async updateCurrency(value) {
+    await db.query(
+      "INSERT INTO app_settings (key, value) VALUES ('currency', $1) ON CONFLICT (key) DO UPDATE SET value = $1",
+      [value]
+    );
     return value;
   }
 }

@@ -91,6 +91,36 @@ const markComplete = async (txId, userId) => {
   return result.rows[0];
 };
 
+const acceptRequest = async (txId, userId) => {
+  const check = await db.query(
+    "SELECT id FROM transactions WHERE id = $1 AND to_user_id = $2 AND type = 'request' AND status = 'pending'",
+    [txId, userId]
+  );
+  if (check.rows.length === 0) {
+    throw new Error('Transaction not found or not authorized');
+  }
+  const result = await db.query(
+    "UPDATE transactions SET status = 'completed' WHERE id = $1 RETURNING *",
+    [txId]
+  );
+  return result.rows[0];
+};
+
+const declineRequest = async (txId, userId) => {
+  const check = await db.query(
+    "SELECT id FROM transactions WHERE id = $1 AND to_user_id = $2 AND type = 'request' AND status = 'pending'",
+    [txId, userId]
+  );
+  if (check.rows.length === 0) {
+    throw new Error('Transaction not found or not authorized');
+  }
+  const result = await db.query(
+    "UPDATE transactions SET status = 'declined' WHERE id = $1 RETURNING *",
+    [txId]
+  );
+  return result.rows[0];
+};
+
 const getWithFriend = async (userId, friendId) => {
   const result = await db.query(
     `SELECT
@@ -167,4 +197,4 @@ const getAuditLog = async (userId) => {
   return result.rows;
 };
 
-module.exports = { getLatest, getWithFriend, createTransaction, getAuditLog, getRecentFriends, markComplete };
+module.exports = { getLatest, getWithFriend, createTransaction, getAuditLog, getRecentFriends, markComplete, acceptRequest, declineRequest };

@@ -35,7 +35,7 @@ const getGroupById = async (req, res) => {
 
 const getGroupMessages = async (req, res) => {
   try {
-    const messages = await groupService.getGroupMessages(Number(req.params.id));
+    const messages = await groupService.getGroupMessages(Number(req.params.id), req.user.userId);
     res.json(messages);
   } catch (err) {
     console.error(err);
@@ -45,7 +45,7 @@ const getGroupMessages = async (req, res) => {
 
 const addMessage = async (req, res) => {
   try {
-    const { type, description, amount, currency } = req.body;
+    const { type, description, amount, currency, splits = [] } = req.body;
     if (!type || !amount) return res.status(400).json({ error: 'type and amount are required' });
     if (!['expense', 'payment'].includes(type)) return res.status(400).json({ error: 'type must be expense or payment' });
     if (Number(amount) <= 0) return res.status(400).json({ error: 'amount must be greater than 0' });
@@ -53,7 +53,7 @@ const addMessage = async (req, res) => {
     const msg = await groupService.addMessage(
       Number(req.params.id),
       req.user.userId,
-      { type, description, amount, currency }
+      { type, description, amount, currency, splits }
     );
     res.status(201).json(msg);
   } catch (err) {
@@ -153,9 +153,22 @@ const removeMember = async (req, res) => {
   }
 };
 
+const getGroupPendingRequests = async (req, res) => {
+  try {
+    const requests = await groupService.getGroupPendingRequests(
+      Number(req.params.id),
+      req.user.userId
+    );
+    res.json(requests);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Unable to fetch pending requests' });
+  }
+};
+
 module.exports = {
   createGroup, getUserGroups, getGroupById, updateGroup, removeMember,
   getGroupMessages, addMessage,
   getMessageById, settleExpense, getGroupBalances, settleMemberAllExpenses,
-  getMyGroupBalances, settlePairwise,
+  getMyGroupBalances, settlePairwise, getGroupPendingRequests,
 };
