@@ -5,7 +5,7 @@ const AppError = require('../utils/AppError');
 const { sendOtpEmail } = require('../utils/mailer');
 
 const generateToken = (userId, email) =>
-  jwt.sign({ userId, email }, process.env.JWT_SECRET || 'your-secret-key', { expiresIn: '7d' });
+  jwt.sign({ userId, email }, process.env.JWT_SECRET || 'your-secret-key', { expiresIn: '90d' });
 
 const generateOtp = () => String(Math.floor(100000 + Math.random() * 900000));
 
