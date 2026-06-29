@@ -39,6 +39,11 @@ module.exports = {
         allowNull: false,
         defaultValue: 'AED',
       },
+      status: {
+        type: Sequelize.ENUM('pending', 'completed', 'declined'),
+        allowNull: false,
+        defaultValue: 'pending',
+      },
       created_at: {
         type: Sequelize.DATE,
         allowNull: false,
