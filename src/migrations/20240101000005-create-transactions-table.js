@@ -22,7 +22,7 @@ module.exports = {
         onDelete: 'CASCADE',
       },
       type: {
-        type: Sequelize.ENUM('expense', 'payment', 'request'),
+        type: Sequelize.STRING(20),
         allowNull: false,
         defaultValue: 'expense',
       },
@@ -40,7 +40,7 @@ module.exports = {
         defaultValue: 'AED',
       },
       status: {
-        type: Sequelize.ENUM('pending', 'completed', 'declined'),
+        type: Sequelize.STRING(20),
         allowNull: false,
         defaultValue: 'pending',
       },
@@ -54,5 +54,7 @@ module.exports = {
 
   async down(queryInterface) {
     await queryInterface.dropTable('transactions');
+    await queryInterface.sequelize.query('DROP TYPE IF EXISTS "public"."enum_transactions_type";');
+    await queryInterface.sequelize.query('DROP TYPE IF EXISTS "public"."enum_transactions_status";');
   },
 };
