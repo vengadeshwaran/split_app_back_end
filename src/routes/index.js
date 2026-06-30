@@ -7,6 +7,9 @@ const transactionRoutes = require('./transactionRoutes');
 const groupRoutes       = require('./groupRoutes');
 const settingsRoutes    = require('./settingsRoutes');
 const adminRoutes       = require('./adminRoutes');
+const { verifyToken }   = require('../middlewares/authMiddleware');
+
+router.get('/is-valid', verifyToken, (req, res) => res.json({ data: true }));
 
 router.use('/auth',         authRoutes);
 router.use('/users',        userRoutes);
