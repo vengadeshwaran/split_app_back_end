@@ -9,6 +9,8 @@ const settingsRoutes    = require('./settingsRoutes');
 const adminRoutes       = require('./adminRoutes');
 const { verifyToken }   = require('../middlewares/authMiddleware');
 
+router.get('/health', (req, res) => res.json({ status: 'ok', timestamp: new Date().toISOString() }));
+
 router.get('/is-valid', verifyToken, (req, res) => res.json({ data: true }));
 
 router.use('/auth',         authRoutes);
