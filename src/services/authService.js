@@ -5,7 +5,7 @@ const AppError = require('../utils/AppError');
 const { sendOtpEmail } = require('../utils/mailer');
 
 const generateToken = (userId, email) =>
-  jwt.sign({ userId, email }, process.env.JWT_SECRET || 'your-secret-key', { expiresIn: '7d' });
+  jwt.sign({ userId, email }, process.env.JWT_SECRET || 'your-secret-key', { expiresIn: '90d' });
 
 const generateOtp = () => String(Math.floor(100000 + Math.random() * 900000));
 
@@ -28,22 +28,25 @@ class AuthService {
 
     const hashedPassword = await bcrypt.hash(password, 10);
     const color_code = generateColor();
-    const otp = generateOtp();
-    const expires_at = new Date(Date.now() + 10 * 60 * 1000);
 
-    await OtpVerification.destroy({ where: { email } });
-    await OtpVerification.create({
+    const user = await User.create({
+      name: fullName.trim(),
       email,
-      otp,
-      full_name: fullName.trim(),
-      hashed_password: hashedPassword,
+      password: hashedPassword,
       color_code,
-      expires_at,
     });
 
-    await sendOtpEmail(email, otp);
+    const token = generateToken(user.id, user.email);
 
-    return { email };
+    return {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      color_code: user.color_code,
+      is_admin: user.is_admin || false,
+      preferred_currency: user.preferred_currency || 'Indian Rupee (₹)',
+      token,
+    };
   }
 
   async verifyOtp({ email, otp }) {

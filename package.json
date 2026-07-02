@@ -11,6 +11,7 @@
     "migrate:undo": "sequelize-cli db:migrate:undo:all --config src/config/database.js --migrations-path src/migrations --models-path src/models",
     "seed": "sequelize-cli db:seed:all --config src/config/database.js --seeders-path src/seeders",
     "seed:undo": "sequelize-cli db:seed:undo:all --config src/config/database.js --seeders-path src/seeders",
+    "db:setup": "npm run migrate && npm run seed",
     "db:reset": "npm run migrate:undo && npm run migrate && npm run seed",
     "db:fresh": "node src/scripts/dropTables.js && npm run migrate && npm run seed"
   },

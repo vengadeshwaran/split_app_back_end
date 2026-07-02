@@ -85,4 +85,30 @@ const markComplete = async (req, res) => {
   }
 };
 
-module.exports = { getLatest, getWithFriend, create, getAuditLog, getRecentFriends, markComplete };
+const accept = async (req, res) => {
+  try {
+    const txId = Number(req.params.id);
+    if (!txId) return res.status(400).json({ error: 'Invalid transaction id' });
+    const tx = await transactionService.acceptRequest(txId, req.user.userId);
+    res.json(tx);
+  } catch (error) {
+    console.error(error);
+    res.status(error.message.includes('not authorized') ? 403 : 500)
+      .json({ error: error.message || 'Unable to accept request' });
+  }
+};
+
+const decline = async (req, res) => {
+  try {
+    const txId = Number(req.params.id);
+    if (!txId) return res.status(400).json({ error: 'Invalid transaction id' });
+    const tx = await transactionService.declineRequest(txId, req.user.userId);
+    res.json(tx);
+  } catch (error) {
+    console.error(error);
+    res.status(error.message.includes('not authorized') ? 403 : 500)
+      .json({ error: error.message || 'Unable to decline request' });
+  }
+};
+
+module.exports = { getLatest, getWithFriend, create, getAuditLog, getRecentFriends, markComplete, accept, decline };

@@ -9,5 +9,7 @@ router.get('/recent-friends',  verifyToken, transactionController.getRecentFrien
 router.get('/with/:friendId',  verifyToken, transactionController.getWithFriend);
 router.post('/',               verifyToken, transactionController.create);
 router.patch('/:id/complete',  verifyToken, transactionController.markComplete);
+router.patch('/:id/accept',   verifyToken, transactionController.accept);
+router.patch('/:id/decline',  verifyToken, transactionController.decline);
 
 module.exports = router;
