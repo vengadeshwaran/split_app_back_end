@@ -7,6 +7,7 @@ router.get('/',               verifyToken, groupController.getUserGroups);
 router.post('/',              verifyToken, groupController.createGroup);
 router.get('/:id',                   verifyToken, groupController.getGroupById);
 router.patch('/:id',                 verifyToken, groupController.updateGroup);
+router.post('/:id/members',          verifyToken, groupController.addMember);
 router.delete('/:id/members/:userId',verifyToken, groupController.removeMember);
 router.get('/:id/messages',          verifyToken, groupController.getGroupMessages);
 router.post('/:id/messages',             verifyToken, groupController.addMessage);
@@ -16,5 +17,6 @@ router.get('/:id/balances',                     verifyToken, groupController.get
 router.post('/:id/settle-member',               verifyToken, groupController.settleMemberAllExpenses);
 router.get('/:id/my-balances',                  verifyToken, groupController.getMyGroupBalances);
 router.post('/:id/settle-pairwise',             verifyToken, groupController.settlePairwise);
+router.get('/:id/requests',                     verifyToken, groupController.getGroupPendingRequests);
 
 module.exports = router;
